@@ -62,7 +62,7 @@ public:
      *
      * @exception std::invalid_argument the argument is out of range.
      */
-    HyperLogLog(uint8_t b = 4) throw (std::invalid_argument) :
+    HyperLogLog(uint8_t b = 4) :
             b_(b), m_(1 << b), M_(m_, 0) {
 
         if (b < 4 || 30 < b) {
@@ -136,10 +136,10 @@ public:
      * The number of registers in each must be the same.
      *
      * @param[in] other HyperLogLog instance to be merged
-     * 
+     *
      * @exception std::invalid_argument number of registers doesn't match.
      */
-    void merge(const HyperLogLog& other) throw (std::invalid_argument) {
+    void merge(const HyperLogLog& other) {
         if (m_ != other.m_) {
             std::stringstream ss;
             ss << "number of registers doesn't match: " << m_ << " != " << other.m_;
@@ -177,7 +177,7 @@ public:
         std::swap(b_, rhs.b_);
         std::swap(m_, rhs.m_);
         std::swap(alphaMM_, rhs.alphaMM_);
-        M_.swap(rhs.M_);       
+        M_.swap(rhs.M_);
     }
 
     /**
@@ -187,7 +187,7 @@ public:
      *
      * @exception std::runtime_error When failed to dump.
      */
-    void dump(std::ostream& os) const throw(std::runtime_error){
+    void dump(std::ostream& os) const {
         os.write((char*)&b_, sizeof(b_));
         os.write((char*)&M_[0], sizeof(M_[0]) * M_.size());
         if(os.fail()){
@@ -197,19 +197,19 @@ public:
 
     /**
      * Restore the status from a stream
-     * 
+     *
      * @param[in] is The input stream where the status is saved
      *
      * @exception std::runtime_error When failed to restore.
      */
-    void restore(std::istream& is) throw(std::runtime_error){
+    void restore(std::istream& is) {
         uint8_t b = 0;
         is.read((char*)&b, sizeof(b));
         HyperLogLog tempHLL(b);
         is.read((char*)&(tempHLL.M_[0]), sizeof(M_[0]) * tempHLL.m_);
         if(is.fail()){
            throw std::runtime_error("Failed to restore");
-        }       
+        }
         swap(tempHLL);
     }
 
@@ -234,7 +234,8 @@ public:
      *
      * @exception std::invalid_argument the argument is out of range.
      */
-    HyperLogLogHIP(uint8_t b = 4) throw (std::invalid_argument) : HyperLogLog(b), register_limit_((1 << 5) - 1), c_(0.0), p_(1 << b) {
+    HyperLogLogHIP(uint8_t b = 4) :
+        HyperLogLog(b), register_limit_((1 << 5) - 1), c_(0.0), p_(1 << b) {
     }
 
     /**
@@ -274,10 +275,10 @@ public:
      * The number of registers in each must be the same.
      *
      * @param[in] other HyperLogLog instance to be merged
-     * 
+     *
      * @exception std::invalid_argument number of registers doesn't match.
      */
-    void merge(const HyperLogLogHIP& other) throw (std::invalid_argument) {
+    void merge(const HyperLogLogHIP& other) {
         if (m_ != other.m_) {
             std::stringstream ss;
             ss << "number of registers doesn't match: " << m_ << " != " << other.m_;
@@ -324,7 +325,7 @@ public:
         std::swap(b_, rhs.b_);
         std::swap(m_, rhs.m_);
         std::swap(c_, rhs.c_);
-        M_.swap(rhs.M_);       
+        M_.swap(rhs.M_);
     }
 
     /**
@@ -334,7 +335,7 @@ public:
      *
      * @exception std::runtime_error When failed to dump.
      */
-    void dump(std::ostream& os) const throw(std::runtime_error){
+    void dump(std::ostream& os) const {
         os.write((char*)&b_, sizeof(b_));
         os.write((char*)&M_[0], sizeof(M_[0]) * M_.size());
         os.write((char*)&c_, sizeof(c_));
@@ -346,12 +347,12 @@ public:
 
     /**
      * Restore the status from a stream
-     * 
+     *
      * @param[in] is The input stream where the status is saved
      *
      * @exception std::runtime_error When failed to restore.
      */
-    void restore(std::istream& is) throw(std::runtime_error){
+    void restore(std::istream& is) {
         uint8_t b = 0;
         is.read((char*)&b, sizeof(b));
         HyperLogLogHIP tempHLL(b);
@@ -360,10 +361,10 @@ public:
         is.read((char*)&(tempHLL.p_), sizeof(double));
         if(is.fail()){
            throw std::runtime_error("Failed to restore");
-        }       
+        }
         swap(tempHLL);
     }
-private: 
+private:
     const uint8_t register_limit_;
     double c_;
     double p_;
