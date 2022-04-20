@@ -13,7 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
-#include "murmur3.h"
+#include "MurmurHash3.h"
 
 #define HLL_HASH_SEED 313
 
